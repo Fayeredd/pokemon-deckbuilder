@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html data-ng-app="PokeModule">
+<head>
+<meta charset="ISO-8859-1">
+<title>Pokemon TCG Deckbuilder</title>
+</head>
+<body>
+	<div data-ng-controller = 'PokeController as poke'>
+	
+		<input type="text" data-ng-model="pokeInput"/>
+		<button data-ng-click = "poke.getPokemon(pokeInput)">Get Pokemon</button>
+		
+		<input type="text" data-ng-model="superInput"/>
+		<button data-ng-click = "poke.getBySuperType(superInput)">Get by Super</button>
+		
+		<button data-ng-click = "poke.getByPage()">Get by Page</button>
+		
+		<div data-ng-show="poke.pokemon">
+	      <div></div>
+	      <img alt="Pokemon Image" data-ng-src="{{poke.pokemon[0].imageUrl}}"/>
+	    </div>
+	</div>
+	
+	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.6/angular.min.js"></script>
+	<script src="controllers.js"></script>
+
+</body>
+</html>
