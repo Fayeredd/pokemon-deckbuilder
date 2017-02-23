@@ -1,22 +1,12 @@
 /**
  * 
  */
+
 angular.module("PokeModule",[]);
 
 angular.module("PokeModule").controller("PokeController",function($scope,$http,$q){
-
-	var pokeData = this;
 	
-	pokeData.getPokemon=(function(input){
-		
-		$http.get("https://api.pokemontcg.io/v1/cards?name="+input+"&pageSize=1000")
-		.then(function(response){
-			pokeData.pokemon = response.data;
-			console.log(pokeData);
-		});
-	});
-	
-	pokeData.getBySuperType=(function(input){
+	var preload = (function(input){
 		var promises = [];
 		var localData;
 		var sortedCards = [];
@@ -33,8 +23,7 @@ angular.module("PokeModule").controller("PokeController",function($scope,$http,$
 			localData=data;
 			for (x=0;x<=localData.length;x++){
 				if(x===localData.length){
-					pokeData.pokemon=sortedCards;
-					console.log(pokeData.pokemon);
+					return sortedCards;
 				} else {
 					for(z=0;z<localData[x].data.cards.length;z++){
 						var cards = localData[x].data.cards[z];
@@ -43,6 +32,20 @@ angular.module("PokeModule").controller("PokeController",function($scope,$http,$
 				}
 			}
 		});
+	})
+	
+	var pokemonCards = preload("pokemon");
+	var trainerCards = preload("trainer");
+	var energyCards = preload("energy");
+	
+	var pokeData = this;
+	
+	pokeData.getPokemon=(function(input){
+		
+	});
+	
+	pokeData.getBySuperType=(function(input){
+		
 	});
 	
 	pokeData.getByPage=function(){
