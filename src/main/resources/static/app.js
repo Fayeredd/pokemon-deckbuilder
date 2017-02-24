@@ -46,8 +46,8 @@
 //}
 
 
-//var app = angular.module("PokeModule",['ui.router', 'ui.bootstrap']);
-//
+var app = angular.module("PokeModule",['ui.router', 'ui.bootstrap']);
+
 //app.config(function($stateProvider, $urlRouterProvider){
 //	
 //	$stateProvider
@@ -63,7 +63,7 @@
 //			url: '/lobby',
 //			templateUrl: 'templates/game/lobby.html'
 //		})
-//		.state('batltle',{
+//		.state('battle',{
 //			url: '/battle',
 //			templateUrl: 'templates/game/battle.html'
 //		})
