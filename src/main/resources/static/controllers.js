@@ -189,4 +189,10 @@ angular.module("PokeModule").controller("PokeController",['preloadService','filt
 			pokemon.show = true;
 		});
 	});
+	
+	$scope.hideAll=(function(list){
+		angular.forEach(list, function(pokemon){
+			pokemon.show = false;
+		});
+	});
 }]);

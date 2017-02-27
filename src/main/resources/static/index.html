@@ -16,7 +16,7 @@
 		<input type="text" data-ng-model="pokeInput"/>
 		<button data-ng-click = "poke.getPokemonByName(pokeInput); showAll(poke.search)">Get Pokemon</button>
 		
-		<button data-ng-click = "poke.getUniquePokemon()">Get Unique Pokemon</button>
+		<button data-ng-click = "poke.getUniquePokemon(); hideAll(poke.search)">Get Unique Pokemon</button>
 		
 		<button data-ng-click = "poke.getTrainers(); showAll(poke.search)">Get Trainers</button>
 		
