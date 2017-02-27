@@ -41,20 +41,31 @@ angular.module("PokeModule").controller("PokeController",['preloadService','filt
 	};
 	
 	pokeData.getPokemonByName=(function(input){
-		var supertype = input.supertype;
-		if(supertype.includes("Pok")){
-			console.log(supertype);
-			var card = [];
+		var card = [];
+		if(typeof input === "string"){
 			console.log(input);
 			for(i=0;i<pokeData.pokemonCards.length;i++){
-				if(pokeData.pokemonCards[i].name === input.name){
+				if(pokeData.pokemonCards[i].name === input){
 					card.push(pokeData.pokemonCards[i]);
 				}
 			}
 			pokeData.search = card;
 			console.log(card);
+		} else {
+			var supertype = input.supertype;
+			if(supertype.includes("Pok")){
+				console.log(supertype);
+				console.log(input);
+				for(i=0;i<pokeData.pokemonCards.length;i++){
+					if(pokeData.pokemonCards[i].name === input.name){
+						card.push(pokeData.pokemonCards[i]);
+					}
+				}
+				pokeData.search = card;
+				console.log(card);
+			}
 		}
-	})
+	});
 	
 	pokeData.getUniquePokemon=(function(){
 		var pokeList = [];
