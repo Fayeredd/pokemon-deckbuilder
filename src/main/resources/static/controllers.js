@@ -2,41 +2,67 @@
  * 
  */
 
-angular.module("PokeModule").controller("PokeController", function(preloadService){
-	
-	var pokemonCards = preloadService.preload("pokemon");
-	var trainerCards = preloadService.preload("trainer");
-	var energyCards = preloadService.preload("energy");
-	
-	var deck = {
-		deckCount : 0,
-		deckMax : 60,
-		cards : [],
-		
+angular.module("PokeModule").filter('startFrom', function () {
+	return function (input, start) {
+		if (input) {
+			start = +start;
+			return input.slice(start);
+		}
+		return [];
 	};
-	
+});
+
+angular.module("PokeModule").controller("PokeController",['preloadService','filterFilter','$log','$scope', function(preloadService,filterFilter,$log,$scope){
+
 	var pokeData = this;
 	
-	pokeData.getPokemon=(function(input){
-		var card;
-		console.log(input);
-		for(i=0;i<pokemonCards.length;i++){
-			if(pokemonCards[i].name === input){
-				card=pokemonCards[i];
-				console.log(card);
-				console.log(i);
-	//			return card;
+	pokeData.search = [];
+	
+	pokeData.itemsPerPage = 20;
+	pokeData.currentPage = 1;
+	pokeData.setPage = function (pageNo) {
+		pokeData.currentPage = pageNo;
+	  };
+
+	  pokeData.pageChanged = function() {
+	    $log.log('Page changed to: ' + pokeData.currentPage);
+	  };
+	
+	pokeData.maxSize = 5;
+	  
+	pokeData.pokemonCards = preloadService.preload("pokemon");
+	pokeData.trainerCards = preloadService.preload("trainer");
+	pokeData.energyCards = preloadService.preload("energy");
+	
+	pokeData.deck = {
+		deckCount : 0,
+		deckMax : 60,
+		cards : []
+	};
+	
+	pokeData.getPokemonByName=(function(input){
+		var supertype = input.supertype;
+		if(supertype.includes("Pok")){
+			console.log(supertype);
+			var card = [];
+			console.log(input);
+			for(i=0;i<pokeData.pokemonCards.length;i++){
+				if(pokeData.pokemonCards[i].name === input.name){
+					card.push(pokeData.pokemonCards[i]);
+				}
 			}
+			pokeData.search = card;
+			console.log(card);
 		}
 	})
 	
-	pokeData.getAllPokemon=(function(){
+	pokeData.getUniquePokemon=(function(){
 		var pokeList = [];
 		var localIndeces = [];
-		for(i=0;i<pokemonCards.length;i++){
-			if(localIndeces.indexOf(pokemonCards[i].nationalPokedexNumber) === -1){
-				localIndeces.push(pokemonCards[i].nationalPokedexNumber);
-				pokeList.push(pokemonCards[i]);
+		for(i=0;i<pokeData.pokemonCards.length;i++){
+			if(localIndeces.indexOf(pokeData.pokemonCards[i].nationalPokedexNumber) === -1){
+				localIndeces.push(pokeData.pokemonCards[i].nationalPokedexNumber);
+				pokeList.push(pokeData.pokemonCards[i]);
 			}
 		}
 		pokeList.sort(function(a,b){
@@ -44,17 +70,21 @@ angular.module("PokeModule").controller("PokeController", function(preloadServic
 			var y = b.nationalPokedexNumber;
 			return ((x<y) ? -1 : ((x>y) ? 1 : 0));
 		});
-		console.log(pokeList);
-//		return pokeList;
+		
+		pokeData.pageCount = function(){
+			return Math.ceil(pokeList.length / pokeData.itemsPerPage);
+		}
+		pokeData.totalItems = pokeList.length;
+		pokeData.search = pokeList;
 	});
 	
 	pokeData.getTrainers=(function(){
 		var trainerList = [];
 		var localNames = [];
-		for(i=0;i<trainerCards.length;i++){
-			if(localNames.indexOf(trainerCards[i].name) === -1){
-				localNames.push(trainerCards[i].name);
-				trainerList.push(trainerCards[i]);
+		for(i=0;i<pokeData.trainerCards.length;i++){
+			if(localNames.indexOf(pokeData.trainerCards[i].name) === -1){
+				localNames.push(pokeData.trainerCards[i].name);
+				trainerList.push(pokeData.trainerCards[i]);
 			}
 		}
 		trainerList.sort(function(a,b){
@@ -62,18 +92,22 @@ angular.module("PokeModule").controller("PokeController", function(preloadServic
 			var y = b.id;
 			return ((x<y) ? -1 : ((x>y) ? 1 : 0));
 		});
-		console.log(trainerList);
-//		return pokeList;
+		
+		pokeData.pageCount = function(){
+			return Math.ceil(trainerList.length / pokeData.itemsPerPage);
+		}
+		pokeData.totalItems = trainerList.length;
+		pokeData.search = trainerList;
 	});
 	
 	pokeData.getEnergy=(function(){
 		var energyList = [];
 		var localNames = [];
-		for(i=0;i<energyCards.length;i++){
-			if(localNames.indexOf(energyCards[i].name) === -1){
-				if(!energyCards[i].name.toString().includes("Basic") && !energyCards[i].attacks){
-					localNames.push(energyCards[i].name);
-					energyList.push(energyCards[i]);
+		for(i=0;i<pokeData.energyCards.length;i++){
+			if(localNames.indexOf(pokeData.energyCards[i].name) === -1){
+				if(!pokeData.energyCards[i].name.toString().includes("Basic") && !pokeData.energyCards[i].attacks){
+					localNames.push(pokeData.energyCards[i].name);
+					energyList.push(pokeData.energyCards[i]);
 				}
 			}
 		}
@@ -87,37 +121,61 @@ angular.module("PokeModule").controller("PokeController", function(preloadServic
 			var y = b.subtype;
 			return ((x<y) ? -1 : ((x>y) ? 1 : 0));
 		});
-		console.log(energyList);
-//		return pokeList;
+		
+		pokeData.pageCount = function(){
+			return Math.ceil(energyList.length / pokeData.itemsPerPage);
+		}
+		pokeData.totalItems = energyList.length;
+		pokeData.search = energyList;
 	});
 	
 	pokeData.addToDeck=(function(input){
-		(function(input){
-			var count = {};
-			deck.cards.forEach(function(x){
-				var num = x.nationalPokedexNumber;
-				count[num] = (count[num] || 0)+1;
-			});
-			if(count[input.nationalPokedexNumber] < 4 && deck.deckCount < deck.deckMax){
-				deck.cards.push(input);
-				deck.deckCount++;
+		var count = 0;
+		var list = pokeData.deck.cards;
+		var supertype = input.supertype;
+		
+		for (i=0;i<list.length;i++){
+			if(list[i].name === input.name){
+				count++;
 			}
-		});
+		}
+		
+		if(pokeData.deck.deckCount < pokeData.deck.deckMax){
+			if(supertype.includes("Pok")){
+				console.log("I'm a pokemon");
+				if(count < 4){
+					pokeData.deck.cards.push(input);
+					pokeData.deck.deckCount++;
+					console.log(input + " Added to Deck");
+					console.log(pokeData.deck);
+				}
+			} else {
+				pokeData.deck.cards.push(input);
+				pokeData.deck.deckCount++;
+				console.log(input + " Added to Deck");
+				console.log(pokeData.deck);
+			}
+		}
 	});
 	
 	pokeData.removeFromDeck=(function(input){
-		if(deck.cards.indexOf(input) > -1){
-			deck.cards.forEach(function(){
-				var index = deck.indexOf(input);
+		if(pokeData.deck.cards.indexOf(input) > -1){
+			pokeData.deck.cards.forEach(function(){
+				var index = pokeData.deck.indexOf(input);
 				(function(){
-					deck.cards.splice(index, 1);
+					pokeData.deck.cards.splice(index, 1);
 				});
 			});
 		}
 	});
 	
 	pokeData.viewDeck=(function(){
-		return deck.cards;
+		return pokeData.deck.cards;
 	});
 	
-});
+	$scope.showAll=(function(list){
+		angular.forEach(list, function(pokemon){
+			pokemon.show = true;
+		});
+	});
+}]);

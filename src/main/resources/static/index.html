@@ -3,29 +3,39 @@
 <head>
 	<meta charset="ISO-8859-1">
 	<title>Pokemon TCG Deckbuilder</title>
-
+	<script src="//ajax.googleapis.com/ajax/libs/angularjs/1.6.1/angular.js"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.6.1/angular-animate.js"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.6.1/angular-sanitize.js"></script>
+    <script src="//angular-ui.github.io/bootstrap/ui-bootstrap-tpls-2.5.0.js"></script>
+    <link href="//netdna.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+	
 </head>
 <body>
 	<div data-ng-controller = 'PokeController as poke'>
 	
 		<input type="text" data-ng-model="pokeInput"/>
-		<button data-ng-click = "poke.getPokemon(pokeInput)">Get Pokemon</button>
+		<button data-ng-click = "poke.getPokemonByName(pokeInput); showAll(poke.search)">Get Pokemon</button>
 		
-		<button data-ng-click = "poke.getAllPokemon()">Get All Pokemon</button>
+		<button data-ng-click = "poke.getUniquePokemon()">Get Unique Pokemon</button>
 		
-		<button data-ng-click = "poke.getTrainers()">Get Trainers</button>
+		<button data-ng-click = "poke.getTrainers(); showAll(poke.search)">Get Trainers</button>
 		
-		<button data-ng-click = "poke.getEnergy()">Get Energy</button>
+		<button data-ng-click = "poke.getEnergy(); showAll(poke.search)">Get Energy</button>
 		
-		<div data-ng-show="poke.pokemon">
-	      <div></div>
-	      <img alt="Pokemon Image" data-ng-src="{{poke.pokemon[0].imageUrl}}"/>
+		<div data-ng-show="poke.card">
+	      <img alt="Pokemon Image" data-ng-src="{{poke.card.imageUrl}}"/>
 	    </div>
+	    <ul class = "list-inline">
+	   		<li data-ng-repeat="pokemon in poke.search | filter:search | startFrom:(poke.currentPage-1)*poke.itemsPerPage | limitTo:poke.itemsPerPage">
+	   			<img alt="Pokemon Image" data-ng-src="{{pokemon.imageUrl}}" data-ng-click="poke.getPokemonByName(pokemon); showAll(poke.search)"/></br>
+	   			<button ng-show="pokemon.show" data-ng-click = "poke.addToDeck(pokemon)">Add to Deck</button>
+	   		</li>
+   		</ul>
+   		<ul uib-pagination total-items="poke.search.length" max-size = "poke.maxSize" class="pagination-sm"
+   			items-per-page = "poke.itemsPerPage" ng-model = "poke.currentPage" ng-change="poke.pageChanged()"></ul>
 	</div>
-	
-	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.6/angular.min.js"></script>
+
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-router/0.4.2/angular-ui-router.js"></script>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/2.5.0/ui-bootstrap-tpls.js"></script>
 	<script src="app.js"></script>
 	<script src="services.js"></script>
 	<script src="controllers.js"></script>

@@ -46,8 +46,17 @@
 //}
 
 
-var app = angular.module("PokeModule",['ui.router', 'ui.bootstrap']);
+var app = angular.module("PokeModule", ['ui.bootstrap', 'ui.router']);
 
+//app.filter('startFrom', function () {
+//	return function (input, start) {
+//		if (input) {
+//			start = +start;
+//			return input.slice(start);
+//		}
+//		return [];
+//	};
+//});
 //app.config(function($stateProvider, $urlRouterProvider){
 //	
 //	$stateProvider
